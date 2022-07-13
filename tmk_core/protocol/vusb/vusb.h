@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "host_driver.h"
+#include <usbdrv/usbdrv.h>
 
 typedef struct usbDescriptorHeader {
     uchar bLength;
@@ -85,33 +86,41 @@ typedef struct usbHIDDescriptor {
 
 typedef struct usbConfigurationDescriptor {
     usbConfigurationDescriptorHeader_t header;
-    usbInterfaceDescriptor_t           keyboardInterface;
-    usbHIDDescriptor_t                 keyboardHID;
-#ifdef USB_CFG_HAVE_INTRIN_ENDPOINT
-    usbEndpointDescriptor_t keyboardINEndpoint;
+
+#ifndef KEYBOARD_SHARED_EP
+    usbInterfaceDescriptor_t keyboardInterface;
+    usbHIDDescriptor_t       keyboardHID;
+    usbEndpointDescriptor_t  keyboardINEndpoint;
+#else
+    usbInterfaceDescriptor_t sharedInterface;
+    usbHIDDescriptor_t       sharedHID;
+    usbEndpointDescriptor_t  sharedINEndpoint;
 #endif
 
-#if defined(MOUSE_ENABLE) || defined(EXTRAKEY_ENABLE)
-    usbInterfaceDescriptor_t mouseExtraInterface;
-    usbHIDDescriptor_t       mouseExtraHID;
-#    ifdef USB_CFG_HAVE_INTRIN_ENDPOINT3
-    usbEndpointDescriptor_t mouseExtraINEndpoint;
-#    endif
-#elif defined(RAW_ENABLE)
+#if defined(RAW_ENABLE)
     usbInterfaceDescriptor_t rawInterface;
     usbHIDDescriptor_t       rawHID;
-#    ifdef USB_CFG_HAVE_INTRIN_ENDPOINT3
-    usbEndpointDescriptor_t rawINEndpoint;
-    usbEndpointDescriptor_t rawOUTEndpoint;
-#    endif
+    usbEndpointDescriptor_t  rawINEndpoint;
+    usbEndpointDescriptor_t  rawOUTEndpoint;
+#endif
+
+#if defined(SHARED_EP_ENABLE) && !defined(KEYBOARD_SHARED_EP)
+    usbInterfaceDescriptor_t sharedInterface;
+    usbHIDDescriptor_t       sharedHID;
+    usbEndpointDescriptor_t  sharedINEndpoint;
+#endif
+
+#if defined(CONSOLE_ENABLE)
+    usbInterfaceDescriptor_t consoleInterface;
+    usbHIDDescriptor_t       consoleHID;
+    usbEndpointDescriptor_t  consoleINEndpoint;
+    usbEndpointDescriptor_t  consoleOUTEndpoint;
 #endif
 } __attribute__((packed)) usbConfigurationDescriptor_t;
 
 #define USB_STRING_LEN(s) (sizeof(usbDescriptorHeader_t) + ((s) << 1))
 
+extern bool vusb_suspended;
+
 host_driver_t *vusb_driver(void);
 void           vusb_transfer_keyboard(void);
-
-#if defined(RAW_ENABLE)
-void raw_hid_task(void);
-#endif
