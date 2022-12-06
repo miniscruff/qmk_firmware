@@ -45,10 +45,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 [_RAISE] = LAYOUT_planck_grid(
-    KC_GRV, KC_1,         KC_2,       KC_3,       KC_4,       KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
-    KC_DEL, LGUI(KC_1),   LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5), KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS, KC_NO,
-    KC_NO,  SGUI(KC_1),   SGUI(KC_2), SGUI(KC_3), SGUI(KC_4), SGUI(KC_5), KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
-    KC_NO,  KC_NO,        KC_NO,      KC_NO,      KC_TRNS,    KC_SPC,     KC_SPC,  KC_TRNS, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT
+    KC_GRV, KC_1,       KC_2,       KC_3,       KC_4,       KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
+    KC_DEL, LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5), KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS, KC_NO,
+    KC_NO,  SGUI(KC_1), SGUI(KC_2), SGUI(KC_3), SGUI(KC_4), SGUI(KC_5), KC_NO,   KC_NO,   KC_NO,   KC_MPLY, KC_MSTP, KC_MUTE,
+    KC_NO,  KC_NO,      KC_NO,      KC_NO,      KC_TRNS,    KC_SPC,     KC_SPC,  KC_TRNS, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT
 ),
 
 [_ADJUST] = LAYOUT_planck_grid(
@@ -64,13 +64,11 @@ uint32_t layer_state_set_user(uint32_t state) {
   return update_tri_layer_state(state, _RAISE, _LOWER, _ADJUST);
 }
 
-float tone_startup[][2] = SONG(QWERTY_SOUND);
 
 void matrix_init_user(void) {
     startup_user();
 }
 
-void startup_user()
-{
-    PLAY_SONG(tone_startup);
+void startup_user() {
+    PLAY_SONG(STARTUP_SONG);
 }
